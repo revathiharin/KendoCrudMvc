@@ -1,0 +1,216 @@
+﻿@* @{ *@
+@*     ViewData["Title"] = "Home Page"; *@
+@* } *@
+@model KendoCrudMvc.Models.UserModel
+
+@using Kendo.Mvc.UI
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+@* @model KendoCrudMvc.Models.UserModel *@
+@{
+    ViewBag.Title = "Index";
+    //Layout = "~/Views/Shared/_MasterPage.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.UserId)
+    <h2></h2>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    @Html.TextBoxFor(m => m.Email, null, new { @class = "form-control" })
+                    <span style="color:red;">@Html.ValidationMessageFor(m => m.Email)</span>
+
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile</label>
+                    @Html.TextBoxFor(m => m.Mobile, null, new { @class = "form-control" })
+
+                    <span style="color:red;">  @Html.ValidationMessageFor(m => m.Mobile)</span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                    <span style="color:red;">@Html.ValidationMessageFor(m => m.Password)</span>
+
+                </div>
+                <div class="form-group">
+                    <label for="confirmpassword">Confirm Password</label>
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                    <span style="color:red;">@Html.ValidationMessageFor(m => m.ConfirmPassword)</span>
+
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date Of Birth</label>
+                    @* <input id="dob" name="dob" /> *@
+                    @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control", @type = "date" })
+                    <br />
+                    <span style="color:red;">@Html.ValidationMessageFor(m => m.DateOfBirth)</span>
+
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" name="btninsert" />
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div id="grid"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Initialize the Kendo DatePicker
+            $("#dob").kendoDatePicker({
+                format: "dd/MM/yyyy"
+            });
+            
+            // Set up the Kendo DataSource
+            var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        type: "POST",
+                        dataType: "json",
+                        url: "@Url.Action("GetAllUsers", "Home")", 
+                        success: function(data) {
+                            console.log("Data fetched from the server:", data); 
+                        },
+                        error: function(e){
+                            console.log("I Am in Error")
+                            console.error("Error loading data: ", e);
+                        }
+                    },
+                    destroy: {
+                        type: "POST",
+                        dataType: "json",
+                        url: "@Url.Action("Delete", "Home")", // Ensure the correct controller is specified
+                            data: function(e) {
+                                return { id: e.id }; // Ensure you send the ID of the item to delete
+                            }
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "UserId", // Ensure this matches your model
+                        fields: {
+                            UserId: { type: "number" },
+                            Email: { type: "string" },
+                            Mobile: { type: "string" },
+                            Password: { type: "string" },
+                            DateOfBirth: { type: "date", format: "{0:dd-MM-yyyy}" }
+                        }
+                    }
+                }, 
+                pageSize: 4
+            });
+
+            console.log("kendoGrid data",dataSource);
+
+            // Initialize the Kendo Grid
+            $("#grid").kendoGrid({
+                dataSource: dataSource,
+                pageable: true,
+                columns: [
+                    { field: "UserId", title: "ID" },
+                    { field: "Email", title: "Email" },
+                    { field: "Mobile", title: "Mobile" },
+                    { field: "Password", title: "Password" },
+                    { field: "DateOfBirth", title: "Date Of Birth", format: "{0:dd-MM-yyyy}" },
+                    {
+                        command: [
+                            {
+                                name: "destroy",
+                                text: "Delete"
+                            },
+                            {
+                                name: "edit",
+                                text: "Edit",
+                                click: function (e) {
+                                    e.preventDefault();
+                                    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                    console.log("DataItem ",dataItem);
+                                    $("#userid").val(dataItem.UserId);
+                                    $("#email").val(dataItem.Email);
+                                    $("#mobile").val(dataItem.Mobile);
+                                    $("#password").val(dataItem.Password);
+                                    $("#dob").data("kendoDatePicker").value(dataItem.DateOfBirth);
+                                }
+                            }
+                        ],
+                        title: "Actions"
+                    } 
+                ],
+                editable: "inline"
+            });
+
+            // Event handler for the edit button
+            $('body').on('click', '.edit', function () {
+                var dataItem = dataSource.get($(this).data("id"));
+                console.log("Edit ID :",dataItem.UserId)
+                $("#userid").val(dataItem.UserId);
+                $("#email").val(dataItem.Email);
+                $("#mobile").val(dataItem.Mobile);
+                $("#password").val(dataItem.Password);
+                $("#dob").data("kendoDatePicker").value(dataItem.DateOfBirth);
+            });
+        });
+    </script>
+    }
+
+
+
+
+@* @(Html.Kendo().Grid<KendoCrudMvc.Models.UserModel>()
+    .Name("grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.UserId).Title("ID").Width(50);
+        columns.Bound(p => p.Email).Title("Email").Width(200);
+        columns.Bound(p => p.Mobile).Title("Mobile").Width(150);
+        columns.Bound(p => p.Password).Title("Password").Width(150);
+        columns.Bound(p => p.DateOfBirth).Title("Date Of Birth").Format("{0:dd-MM-yyyy}").Width(150);
+        columns.Command(command => command.Destroy()).Width(120);
+    })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Excel();
+        toolbar.Pdf();
+         toolbar.Search(); 
+    })
+    .Pdf(pdf => pdf.ProxyURL(Url.Action("Excel_Export_Save", "Grid")))
+    .Excel(excel => excel.ProxyURL(Url.Action("Excel_Export_Save", "Grid")))
+    .Height(700) 
+    .Editable(editable => editable.Mode(GridEditMode.InCell))
+    .Pageable()
+    .Sortable()
+    .Navigatable()
+    .Resizable(r => r.Columns(true))
+    .Reorderable(r => r.Columns(true))
+    .Groupable(g => g.ShowFooter(false))
+    .Filterable()
+    .Scrollable()
+    .DataSource(dataSource => dataSource
+.Ajax()
+.Batch(true)
+.PageSize(20)
+.AutoSync(true)
+.ServerOperation(false)
+.Model(model =>
+{
+    model.Id(p => p.UserId);
+    model.Field(p => p.UserId).Editable(false);
+})
+.Create("CreateUser", "Home")
+.Read("GetAllUsers", "Home")
+.Update("UpdateUser", "Home")
+.Destroy("Delete", "Home")
+    )
+) *@
+    
