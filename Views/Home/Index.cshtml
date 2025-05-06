@@ -1,13 +1,13 @@
 ﻿@* @{ *@
 @*     ViewData["Title"] = "Home Page"; *@
 @* } *@
-@model KendoCrudMvc.Models.UserModel
-
 @using Kendo.Mvc.UI
+@model KendoCrudMvc.Models.UserModel
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
 </div>
 @* @model KendoCrudMvc.Models.UserModel *@
 @{
@@ -98,7 +98,7 @@
                 },
                 schema: {
                     model: {
-                        id: "UserId", // Ensure this matches your model
+                        id: "userId", // Ensure this matches your model
                         fields: {
                             UserId: { type: "number" },
                             Email: { type: "string" },
@@ -112,17 +112,17 @@
             });
 
             console.log("kendoGrid data",dataSource);
-
+            
             // Initialize the Kendo Grid
             $("#grid").kendoGrid({
                 dataSource: dataSource,
                 pageable: true,
                 columns: [
-                    { field: "UserId", title: "ID" },
-                    { field: "Email", title: "Email" },
-                    { field: "Mobile", title: "Mobile" },
-                    { field: "Password", title: "Password" },
-                    { field: "DateOfBirth", title: "Date Of Birth", format: "{0:dd-MM-yyyy}" },
+                    { field: "userId", title: "ID"},
+                    { field: "email", title: "Email" },
+                    { field: "mobile", title: "Mobile" },
+                    { field: "password", title: "Password" ,template: "<span>******</span>" },
+                    { field: "dateOfBirth", title: "Date Of Birth", format: "{0:dd-MM-yyyy}" }, 
                     {
                         command: [
                             {
@@ -136,29 +136,32 @@
                                     e.preventDefault();
                                     var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                                     console.log("DataItem ",dataItem);
-                                    $("#userid").val(dataItem.UserId);
-                                    $("#email").val(dataItem.Email);
-                                    $("#mobile").val(dataItem.Mobile);
-                                    $("#password").val(dataItem.Password);
-                                    $("#dob").data("kendoDatePicker").value(dataItem.DateOfBirth);
+                                    $("#userid").val(dataItem.userId);
+                                    $("#email").val(dataItem.email);
+                                    $("#mobile").val(dataItem.mobile);
+                                    $("#password").val(dataItem.password);
+                                    $("#dob").data("kendoDatePicker").value(dataItem.dateOfBirth);
                                 }
                             }
                         ],
                         title: "Actions"
                     } 
                 ],
-                editable: "inline"
+                editable: "inline",
+                dataBound: function() {
+                console.log("Data bound to the grid",dataSource);
+            }
             });
 
             // Event handler for the edit button
             $('body').on('click', '.edit', function () {
                 var dataItem = dataSource.get($(this).data("id"));
-                console.log("Edit ID :",dataItem.UserId)
-                $("#userid").val(dataItem.UserId);
-                $("#email").val(dataItem.Email);
-                $("#mobile").val(dataItem.Mobile);
-                $("#password").val(dataItem.Password);
-                $("#dob").data("kendoDatePicker").value(dataItem.DateOfBirth);
+                console.log("Edit ID :",dataItem.userId)
+                $("#userid").val(dataItem.userId);
+                $("#email").val(dataItem.email);
+                $("#mobile").val(dataItem.mobile);
+                $("#password").val(dataItem.password);
+                $("#dob").data("kendoDatePicker").value(dataItem.dateOfBirth);
             });
         });
     </script>
@@ -214,3 +217,49 @@
     )
 ) *@
     
+
+
+
+
+
+    @* <div class="col-md-8">
+                <div id="gridServer">
+                    
+                    @(Html.Kendo().Grid<KendoCrudMvc.Models.UserModel>
+                        ()
+                        .Name("gridServer")
+                        .Columns(columns =>
+                        {
+                        columns.Bound(p => p.UserId).Title("ID").Width(50);
+                        columns.Bound(p => p.Email).Title("Email").Width(200);
+                        columns.Bound(p => p.Mobile).Title("Mobile").Width(150);
+                        columns.Bound(p => p.Password).Title("Password").Width(150);
+                        columns.Bound(p => p.DateOfBirth).Title("Date Of Birth").Format("{0:dd-MM-yyyy}").Width(150);
+                        columns.Command(command => command.Destroy()).Width(120);
+                        columns.Command(command => command.Edit()).Width(120);
+                        })
+                        .ToolBar(toolbar =>
+                        {
+                        toolbar.Create(); // Add a create button to the toolbar
+                        })
+                        .Editable(editable => editable.Mode(GridEditMode.InLine)) // Set the edit mode
+                        .Pageable() // Enable paging
+                        .Sortable() // Enable sorting
+                        .Filterable() // Enable filtering
+                        .Scrollable() // Enable scrolling
+                        .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .PageSize(20)
+                        .Model(model =>
+                        {
+                        model.Id(p => p.UserId);
+                        model.Field(p => p.UserId).Editable(false);
+                        })
+                        //.Create("CreateUser", "Home") // Action for creating a new user
+                        .Read("GetAllUsers", "Home") // Action for reading users
+                        //.Update("UpdateUser", "Home") // Action for updating a user
+                        //.Destroy("Delete", "Home") // Action for deleting a user
+                        )
+                        //.Height(700) // Set the height of the grid
+                        )
+*@

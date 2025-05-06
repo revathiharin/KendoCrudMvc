@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="~/KendoCrudMvc.styles.css" asp-append-version="true" />
     @* <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2025.1.227/styles/kendo.default-v2.min.css" /> *@
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/themes/10.2.0/default/default-main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/kendo-ui-core/2014.1.416/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/kendo-ui-core/2014.1.416/styles/kendo.default.min.css" rel="stylesheet" />
 </head>
 <body>
     <header>
@@ -26,6 +28,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AspGrid">AspGrid</a>
                         </li>
                     </ul>
                 </div>
@@ -49,6 +54,7 @@
     
     <script src="https://kendo.cdn.telerik.com/2025.1.227/js/kendo.all.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2025.1.227/js/kendo.datepicker.min.js"></script>
+    
     
     
     @* <script src="~/Kendo/js/kendo.core.min.js"></script>

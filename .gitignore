@@ -2,6 +2,7 @@
 # compiled source #
 ###################
 .vs/
+
 *.com
 *.class
 *.dll
@@ -74,3 +75,4 @@ _[Ss]cripts
 *.nupkg
 *.ncrunchsolution
 *.dot[Cc]over
+NuGet.Config

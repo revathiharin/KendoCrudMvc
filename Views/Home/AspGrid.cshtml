@@ -1,0 +1,41 @@
+﻿@using Kendo.Mvc
+@using Kendo.Mvc.UI
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@(Html.Kendo().Grid<KendoCrudMvc.Models.UserModel>()
+    .Name("gridServer")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.UserId).Title("ID").Width(50);
+        columns.Bound(p => p.Email).Title("Email").Width(200);
+        columns.Bound(p => p.Mobile).Title("Mobile").Width(150);
+        columns.Bound(p => p.Password).Title("Password").Width(150);
+        columns.Bound(p => p.DateOfBirth)
+            .Title("Date Of Birth")
+            .Format("{0:dd/MM/yyyy}")
+            .Width(150);
+        columns.Command(command => command.Destroy()).Width(120);
+        columns.Command(command => command.Edit()).Width(120);
+    })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Create(); // Add a create button to the toolbar
+    })
+    .Editable(editable => editable.Mode(GridEditMode.InLine)) // Set the edit mode
+    .Pageable() // Enable paging
+    .Sortable() // Enable sorting
+    .Filterable(filterable => filterable
+        .Mode(GridFilterMode.Row)) // Set filter mode to row
+    .Groupable() // Enable grouping
+    .Scrollable() // Enable scrolling
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Model(model =>
+        {
+            model.Id(p => p.UserId);
+            model.Field(p => p.UserId).Editable(false);
+        })
+        .Read("GetAllUsers", "Home") // Action for reading users
+    )
+)
