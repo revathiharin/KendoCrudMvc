@@ -13,6 +13,12 @@
 
   <ItemGroup>
 	
+    <PackageReference Include="Kendo.Mvc" Version="*" />
+	
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="*" />
+	
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="*" />
+	
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
   </ItemGroup>
 
